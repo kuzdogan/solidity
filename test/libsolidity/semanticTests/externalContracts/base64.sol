@@ -51,10 +51,10 @@ contract test {
 // encode_no_asm(bytes): 0x20, 5, "fooba" -> 0x20, 8, "Zm9vYmE="
 // encode_no_asm(bytes): 0x20, 6, "foobar" -> 0x20, 8, "Zm9vYmFy"
 // encode_inline_asm_large()
-// gas irOptimized: 1382042
-// gas legacy: 1646033
-// gas legacyOptimized: 1206033
+// gas irOptimized: 1396042
+// gas legacy: 1655033
+// gas legacyOptimized: 1214033
 // encode_no_asm_large()
-// gas irOptimized: 3311099
-// gas legacy: 4723077
-// gas legacyOptimized: 2909077
+// gas irOptimized: 3325099
+// gas legacy: 4732077
+// gas legacyOptimized: 2917077

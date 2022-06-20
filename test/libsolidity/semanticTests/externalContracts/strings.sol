@@ -69,6 +69,6 @@ contract test {
 // gas legacy: 31621
 // gas legacyOptimized: 27914
 // benchmark(string,bytes32): 0x40, 0x0842021, 8, "solidity" -> 0x2020
-// gas irOptimized: 2017767
-// gas legacy: 4294510
-// gas legacyOptimized: 2327982
+// gas irOptimized: 2017773
+// gas legacy: 4294519
+// gas legacyOptimized: 2327990
