@@ -177,10 +177,10 @@ void SourceReferenceFormatter::printSourceLocation(SourceReference const& _ref)
 
 void SourceReferenceFormatter::printExceptionInformation(SourceReferenceExtractor::Message const& _msg)
 {
-	Error::Type type = _msg.type;
-	errorColored(Error::errorSeverity(_msg.type)) << Error::formatErrorSeverity(Error::errorSeverity(_msg.type));
+	Error::Severity severity = _msg.severity;
+	errorColored(severity) << Error::formatErrorSeverity(severity);
 	if (m_withErrorIds && _msg.errorId.has_value())
-		errorColored(Error::errorSeverity(type)) << " (" << _msg.errorId.value().error << ")";
+		errorColored(severity) << " (" << _msg.errorId.value().error << ")";
 	messageColored() << ": " << _msg.primary.message << '\n';
 
 	printSourceLocation(_msg.primary);
@@ -195,9 +195,9 @@ void SourceReferenceFormatter::printExceptionInformation(SourceReferenceExtracto
 	m_stream << '\n';
 }
 
-void SourceReferenceFormatter::printExceptionInformation(util::Exception const& _exception, Error::Type _type)
+void SourceReferenceFormatter::printExceptionInformation(util::Exception const& _exception, Error::Severity _severity)
 {
-	printExceptionInformation(SourceReferenceExtractor::extract(m_charStreamProvider, _exception, _type));
+	printExceptionInformation(SourceReferenceExtractor::extract(m_charStreamProvider, _exception, _severity));
 }
 
 void SourceReferenceFormatter::printErrorInformation(ErrorList const& _errors)
