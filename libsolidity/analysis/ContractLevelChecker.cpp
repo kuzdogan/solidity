@@ -427,6 +427,7 @@ void ContractLevelChecker::checkExternalTypeClashes(ContractDefinition const& _c
 					externalDeclarations[functionType->externalSignature()].emplace_back(
 						f, functionType->asExternallyCallableFunction(false)
 					);
+					// TODO:: Can warn about external functions having calldata args here
 			}
 		for (VariableDeclaration const* v: contract->stateVariables())
 			if (v->isPartOfExternalInterface())
