@@ -9,13 +9,17 @@
 ## If the given branch is "release", the resulting package will be uploaded to
 ## ethereum/ethereum PPA, or ethereum/ethereum-dev PPA otherwise.
 ##
-## The gnupg key for "builds@ethereum.org" has to be present in order to sign
-## the package.
-##
 ## It will clone the Solidity git from github, determine the version,
 ## create a source archive and push it to the ubuntu ppa servers.
 ##
-## This requires the following entries in /etc/dput.cf:
+## To interact with launchpad, you need to set the variables $LAUNCHPAD_EMAIL
+## and $LAUNCHPAD_KEYID in the file $PROJECTROOT/.release_ppa_auth to your launchpad email and pgp keyid.
+## This could for example look like this:
+##
+##  LAUNCHPAD_EMAIL=your-launchpad-email@ethereum.org
+##  LAUNCHPAD_KEYID=123ABCFFFFFFFF
+##
+## Additionally the following entries in /etc/dput.cf are required:
 ##
 ##  [ethereum-dev]
 ##  fqdn			= ppa.launchpad.net
@@ -34,11 +38,10 @@
 ##  method			= ftp
 ##  incoming		= ~ethereum/ethereum-static
 ##  login			= anonymous
-
 ##
 ##############################################################################
 
-set -ev
+set -e
 
 if [ -z "$1" ]
 then
@@ -51,17 +54,43 @@ is_release() {
     [[ "${branch}" =~ ^v[0-9]+(\.[0-9]+)*$ ]]
 }
 
-keyid=379F4801D622CDCF
-email=builds@ethereum.org
+# source keyid and email from .release_ppa_auth
+if [ -e .release_ppa_auth ]
+then
+    # shellcheck source=/dev/null
+    source .release_ppa_auth
+fi
+
+if [ -z "$LAUNCHPAD_KEYID" ] || [ -z "$LAUNCHPAD_EMAIL" ]
+then
+    echo "Error: Couldn't find variables \$LAUNCHPAD_KEYID or \$LAUNCHPAD_EMAIL in sourced file .release_ppa_auth (check top comment in $0 for more information)."
+    exit 2
+fi
+
 packagename=solc
 
-static_build_distribution=impish
+# This needs to be a still active release
+static_build_distribution=focal
 
-DISTRIBUTIONS="focal impish jammy kinetic"
+DISTRIBUTIONS="focal jammy kinetic"
+
+checkDputEntries () {
+    if ! grep "${1}" /etc/dput.cf -q; then
+        echo "Error: Missing ${1} section in /etc/dput.cf (check top comment in ${0} for more information)."
+        exit 1
+    fi
+}
 
 if is_release
 then
     DISTRIBUTIONS="$DISTRIBUTIONS STATIC"
+
+    # Sanity checks
+    checkDputEntries "\[ethereum\]"
+    checkDputEntries "\[ethereum-static\]"
+else
+    # Sanity check
+    checkDputEntries "\[ethereum-dev\]"
 fi
 
 for distribution in $DISTRIBUTIONS
@@ -245,7 +274,7 @@ chmod +x debian/rules
 
 versionsuffix=0ubuntu1~${distribution}
 # bump version / add entry to changelog
-EMAIL="$email" dch -v "1:${debversion}-${versionsuffix}" "git build of ${commithash}"
+EMAIL="$LAUNCHPAD_EMAIL" dch -v "1:${debversion}-${versionsuffix}" "git build of ${commithash}"
 
 
 # build source package
@@ -287,7 +316,7 @@ fi
 )
 
 # sign the package
-debsign --re-sign -k "${keyid}" "../${packagename}_${debversion}-${versionsuffix}_source.changes"
+debsign --re-sign -k "${LAUNCHPAD_KEYID}" "../${packagename}_${debversion}-${versionsuffix}_source.changes"
 
 # upload
 dput "${pparepo}" "../${packagename}_${debversion}-${versionsuffix}_source.changes"
