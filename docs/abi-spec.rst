@@ -556,6 +556,7 @@ A function description is a JSON object with the fields:
 
   * ``name``: the name of the parameter.
   * ``type``: the canonical type of the parameter (more below).
+  * ``internalType``: type of the parameter that exists in Solidity but not EVM e.g. "struct Contract.MyStruct", useful for debugging
   * ``components``: used for tuple types (more below).
 
 - ``outputs``: an array of objects similar to ``inputs``.
@@ -580,6 +581,7 @@ An event description is a JSON object with fairly similar fields:
 
   * ``name``: the name of the parameter.
   * ``type``: the canonical type of the parameter (more below).
+  * ``internalType``: type of the parameter that exists in Solidity but not EVM e.g. "struct Contract.MyStruct", useful for debugging
   * ``components``: used for tuple types (more below).
   * ``indexed``: ``true`` if the field is part of the log's topics, ``false`` if it one of the log's data segment.
 
@@ -593,6 +595,7 @@ Errors look as follows:
 
   * ``name``: the name of the parameter.
   * ``type``: the canonical type of the parameter (more below).
+  * ``internalType``: type of the parameter that exists in Solidity but not EVM e.g. "struct Contract.MyStruct", useful for debugging
   * ``components``: used for tuple types (more below).
 
 .. note::
