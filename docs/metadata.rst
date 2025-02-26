@@ -124,8 +124,8 @@ explanatory purposes.
           "version": 1 // NatSpec version
         }
       },
-      // Required: Compiler settings. 
-      // Reflects the settings in the JSON input during compilation, except the 
+      // Required: Compiler settings.
+      // Reflects the settings in the JSON input during compilation, except the
       // "compilationTarget" and the "libraries" fields. Check each field for details.
       // See the standard JSON input's "settings" docs for the rest.
       "settings": {
